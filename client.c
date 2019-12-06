@@ -31,12 +31,9 @@ int main(int argc, char *argv[])
             IP_ADDRESS = argv[1];
             /* Check if Port Number is valid */
             if (only_digits(argv[1])) {
-                /* Check if Port Number is in the correct range. If it is, use it */
-                if (PORT >= 2000 && PORT <= 65535) {
-                    PORT = atoi(argv[1]);
-                }
-                /* Otherwise, prompt user to enter a Port Number within a specified range */
-                else {
+                PORT = atoi(argv[1]);
+                /* Check if Port Number is in the correct range. If not, exit */
+                if (PORT < 2000 || PORT > 65535) {
                     fprintf(stderr, "%s: Error: Invalid Port Number %s\n", argv[0], argv[1]);
                     fprintf(stderr, "%s: Port Number Range: 2000 to 65535\n", argv[0]);
                     exit(1);
