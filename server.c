@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <sys/types.h> 
 #include <sys/socket.h> 
 #include <netinet/in.h>
@@ -94,7 +96,7 @@ int main(int argc, char *argv[])
     /* Initialize variable to store client connection file descriptor */
     /* Get size of client_addr struct to use in accept */
     int connect_fd = 0;
-    int client_len = sizeof(client_addr);
+    socklen_t client_len = sizeof(client_addr);
     /* Call signal handler to handle keyboard interrupts to exit loop */
     signal(SIGINT, &sig_handler);
     /* Continue listening for client connections until keyboard interrupt */

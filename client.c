@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <arpa/inet.h>
 #include <sys/types.h> 
 #include <sys/socket.h> 
 #include <netinet/in.h>
@@ -84,7 +87,7 @@ int main(int argc, char *argv[])
     server_addr.sin_port = htons(PORT);
     /* Connect client socket to server socket, display error message on failure */ 
     fprintf(stdout, "Connecting to Server...\n"); 
-    if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+    if (connect(socket_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
         perror("Error connecting to server socket");
         exit(1);
     }

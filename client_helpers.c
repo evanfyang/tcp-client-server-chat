@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <arpa/inet.h>
 #include <sys/types.h> 
 #include <sys/socket.h> 
 #include <netinet/in.h>
@@ -100,7 +103,7 @@ void clientChat(int socket_fd) {
         }
         /* Reset buffer with zeros */
         bzero(buffer, MAX_INPUT); 
-        fprintf("Your message: ");
+        fprintf(stdout, "Your message: ");
         /* Get message from standard input and store in buffer */
         fgets(buffer, MAX_INPUT, stdin);
         /* If client send '!QUIT', break out of loop and end chat */ 
