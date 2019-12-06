@@ -41,53 +41,6 @@ int only_digits(char *str)
     return 1;
 }
  
-/* return 1 if IP Address is valid, return 0 otherwise. */
-int valid_ip(char *ip_addr)
-{
-    int num_int, decimal_dots = 0;
-    char *numbers;
- 
-    if (ip_addr == NULL) {
-        return 0;
-    }
- 
-    /* Split IP Address by "." */
-    numbers = strtok(ip_addr, ".");
- 
-    if (numbers == NULL) {
-        return 0;
-    }
- 
-    while (numbers) {
-        /* after parsing string, it must contain only digits */
-        if (!only_digits(numbers)) {
-            return 0;
-        }
-        /* convert number string to integer */
-        num_int = atoi(numbers);
-        /* check if the number is between 0 and 255 inclusive */
-        if (num_int >= MIN_IPV4_NUM && num_int <= MAX_IPV4_NUM) {
-            /* parse the remaining string */
-            numbers = strtok(NULL, ".");
-            /* incrememt decimal dot count */
-            if (numbers != NULL) {
-                decimal_dots++;
-            }
-        } 
-        /* if number is not between 0 and 255 inclusive, return 0 */ 
-        else {
-            return 0;
-        }
-    }
- 
-    /* valid IP string must contain 3 dots */
-    if (decimal_dots != IPV4_NUM_DOTS) {
-        return 0;
-    }
-    /* valid IP Address */
-    return 1;
-}
-
 void serverChat(int connect_fd) {
     /* Declare buffer and variables to store return values from read() and write() */
     char buffer[MAX_INPUT];

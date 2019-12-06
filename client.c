@@ -19,28 +19,37 @@ int main(int argc, char *argv[])
 
     /* Must call client with 3 command line arguments */ 
     if (argc < 3 || argc > 3) {
-        printf("Usage: %s [<IP_ADDRESS>] [<PORT_NUMBER>]\n", argv[0]);
+        fprintf(stderr, "Usage: %s [<IP_ADDRESS>] [<PORT_NUMBER>]\n", argv[0]);
 	    exit(1);
     }
     else {
-        /* Check if IP Address is valid. If valid, check if port number is valid. */
+        /* Check if IP Address is valid. If valid, check if port number is valid */
         if (valid_ip(argv[1])) {
             IP_ADDRESS = argv[1];
-            /* If port number is valid, use it */
-            if (only_digits(argv[2]) && atoi(argv[2]) > MIN_PORT_NUM && atoi(argv[2]) < MAX_PORT_NUM) {
-                PORT = atoi(argv[2]);
+            /* Check if Port Number is valid */
+            if (only_digits(argv[1])) {
+                /* Check if Port Number is in the correct range. If it is, use it */
+                if (PORT >= 2000 && PORT <= 65535) {
+                    PORT = atoi(argv[1]);
+                }
+                /* Otherwise, prompt user to enter a Port Number within a specified range */
+                else {
+                    fprintf(stderr, "%s: Error: Invalid Port Number %s\n", argv[0], argv[1]);
+                    fprintf(stderr, "%s: Port Number Range: 2000 to 65535\n", argv[0]);
+                    exit(1);
+                }
             }
-            /* Prompt user to enter valid Port Number */ 
+            /* Otherwise, prompt user to enter a valid Port Number */
             else {
-                printf("%s: Error: Invalid Port Number %s\n", argv[0], argv[2]);
-                printf("%s: Port Number Range: 2000 to 65535\n", argv[0]);
+                fprintf(stderr, "%s: Error: Invalid Port Number %s\n", argv[0], argv[1]);
+                fprintf(stderr, "%s: Port Number Format: [xxxxx], x = 0 to 9 (inclusive)\n", argv[0]);
                 exit(1);
             }
         }
         /* Prompt user to enter a valid IP Address */
         else {
-            printf("%s: Error: Invalid IP Address %s\n", argv[0], argv[1]);
-            printf("%s: IPv4 Format: [x.x.x.x], x = 0 to 255 (inclusive)\n", argv[0]);
+            fprintf(stderr, "%s: Error: Invalid IP Address %s\n", argv[0], argv[1]);
+            fprintf(stderr, "%s: IPv4 Format: [x.x.x.x], x = 0 to 255 (inclusive)\n", argv[0]);
             exit(1);
         }
     }

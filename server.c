@@ -10,7 +10,6 @@
 
 /* Define constants and global variables */
 #define DEFAULT_PORT 8080
-#define DEFAULT_IP_ADDR "127.0.0.1"
 
 #define MIN_PORT_NUM 2000
 #define MAX_PORT_NUM 65535
@@ -21,52 +20,36 @@ sig_atomic_t volatile CONTINUE_LISTENING = 1;
 
 int main(int argc, char *argv[])
 {
-    char *IP_ADDRESS;
     int PORT;
 
-    /* When run with no arguments, use default IP Address and port */
+    /* When run with no arguments, run server using default port */
     if (argc == 1) {  
-	    IP_ADDRESS = DEFAULT_IP_ADDR;
         PORT = DEFAULT_PORT;
     }
     else if (argc == 2) {
-        /* Check if IP Address is valid. If valid, use it and default port. */
-        if (valid_ip(argv[1])) {
-            IP_ADDRESS = argv[1];
-            PORT = DEFAULT_PORT;
-        }
-        /* Prompt user to enter a valid IP Address */
-        else {
-            fprintf(stderr, "%s: Error: Invalid IP Address %s\n", argv[0], argv[1]);
-            fprintf(stderr, "%s: IPv4 Format: [x.x.x.x], x = 0 to 255 (inclusive)\n", argv[0]);
-	        exit(0);
-        }
-    }
-    else if (argc == 3) {
-        /* Check if IP Address is valid. If valid, use it and check if port number is valid. */
-        if (valid_ip(argv[1])) {
-            IP_ADDRESS = argv[1];
-            /* If port number is valid, use it */
-            if (only_digits(argv[2]) && atoi(argv[2]) > MIN_PORT_NUM && atoi(argv[2]) < MAX_PORT_NUM) {
-                PORT = atoi(argv[2]);
-            }
-            /* Prompt user to valid Port Number */
-            else {
-                fprintf(stderr, "%s: Error: Invalid Port Number %s\n", argv[0], argv[2]);
+        /* Check if Port Number is valid */
+        if (only_digits(argv[1])) {
+            /* Check if Port Number is in the correct range */
+            if (PORT < 2000 || PORT > 65535) {
+                fprintf(stderr, "%s: Error: Invalid Port Number %s\n", argv[0], argv[1]);
                 fprintf(stderr, "%s: Port Number Range: 2000 to 65535\n", argv[0]);
-                exit(0);
+	            exit(1);
+            }
+            /* Port Number is valid and in correct range, use it */
+            else {
+                PORT = atoi(argv[1]);
             }
         }
-        /* Prompt user to enter a valid IP Address */
+        /* Otherwise, prompt user to enter a valid Port Number */
         else {
-            fprintf(stderr, "%s: Error: Invalid IP Address %s\n", argv[0], argv[1]);
-            fprintf(stderr, "%s: IPv4 Format: [x.x.x.x], x = 0 to 255 (inclusive)\n", argv[0]);
-            exit(0);
+            fprintf(stderr, "%s: Error: Invalid Port Number %s\n", argv[0], argv[1]);
+            fprintf(stderr, "%s: Port Number Format: [xxxxx], x = 0 to 9 (inclusive)\n", argv[0]);
+	        exit(1);
         }
     }
-    /* Cannot call server with more than 2 command line arguments */ 
+    /* Cannot call server with more than 1 command line argument */ 
     else {
-        fprintf(stderr, "Usage: %s [<IP_ADDRESS>] [<PORT_NUMBER>]\n", argv[0]);
+        fprintf(stderr, "Usage: %s [<PORT_NUMBER>]\n", argv[0]);
 	    exit(1);
     }
 
@@ -85,9 +68,10 @@ int main(int argc, char *argv[])
     struct sockaddr_in server_addr, client_addr;
     /* Initialize server_addr sockaddr_in struct to zeros */
     bzero(&server_addr, sizeof(server_addr));
-    /* Specify network interface to bind with given IP Address and Port Number */ 
+    /* Specify network interface to bind with the IP Address of the machine 
+       running the server and the specified the Port Number */ 
     server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = inet_addr(IP_ADDRESS);
+    server_addr.sin_addr.s_addr = htonl(INADDR_ANY); /* Gets IP Address of machine */ 
     server_addr.sin_port = htons(PORT);
     /* Bind socket to the specified address, display error message on failure */
     if (bind(socket_fd, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0) {
