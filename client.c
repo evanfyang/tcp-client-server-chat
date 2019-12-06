@@ -30,10 +30,10 @@ int main(int argc, char *argv[])
         if (valid_ip(argv[1])) {
             IP_ADDRESS = argv[1];
             /* Check if Port Number is valid */
-            if (only_digits(argv[1])) {
-                PORT = atoi(argv[1]);
+            if (only_digits(argv[2])) {
+                PORT = atoi(argv[2]);
                 /* Check if Port Number is in the correct range. If not, exit */
-                if (PORT < 2000 || PORT > 65535) {
+                if (PORT < MIN_PORT_NUM || PORT > MAX_PORT_NUM) {
                     fprintf(stderr, "%s: Error: Invalid Port Number %s\n", argv[0], argv[1]);
                     fprintf(stderr, "%s: Port Number Range: 2000 to 65535\n", argv[0]);
                     exit(1);
