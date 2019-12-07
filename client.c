@@ -16,6 +16,8 @@
 #define MIN_PORT_NUM 2000
 #define MAX_PORT_NUM 65535
 
+#define MAX_IP_LENGTH 15
+
 int main(int argc, char *argv[])
 {
     char *IP_ADDRESS;
@@ -70,13 +72,18 @@ int main(int argc, char *argv[])
     struct sockaddr_in server_addr;
     /* Initialize server_addr sockaddr_in struct to zeros */
     bzero(&server_addr, sizeof(server_addr));
-    /* Get host information from IP Address and store in a hostent struct */ 
+    /* Get host information from IP Address and store in a hostent struct */
+    char* HOST = (char *) malloc(MAX_IP_LENGTH);
+    strcpy(HOST, IP_ADDRESS); 
     struct hostent *server;
-    server = gethostbyname(IP_ADDRESS);
+    server = gethostbyname(HOST);
     /* Cannot find host with specified IP Address */
     if (server == NULL) {
         fprintf(stderr,"Error: The host %s does not exist!\n", IP_ADDRESS);
         exit(1);
+    }
+    else {
+        fprintf(stdout, "Connecting to Server %s...\n", IP_ADDRESS); 
     }
     /* Specify network interface to connect with given IP Address and Port Number */ 
     server_addr.sin_family = AF_INET;
@@ -84,7 +91,6 @@ int main(int argc, char *argv[])
     // server_addr.sin_addr.s_addr = inet_addr(IP_ADDRESS);
     server_addr.sin_port = htons(PORT);
     /* Connect client socket to server socket, display error message on failure */ 
-    fprintf(stdout, "Connecting to Server...\n"); 
     if (connect(socket_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
         perror("Error connecting to server socket");
         exit(1);
