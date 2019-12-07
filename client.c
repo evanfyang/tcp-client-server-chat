@@ -5,6 +5,7 @@
 #include <signal.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <netdb.h> 
 #include <arpa/inet.h>
 #include <sys/types.h> 
 #include <sys/socket.h> 
@@ -70,17 +71,17 @@ int main(int argc, char *argv[])
     /* Initialize server_addr sockaddr_in struct to zeros */
     bzero(&server_addr, sizeof(server_addr));
     /* Get host information from IP Address and store in a hostent struct */ 
-    // struct hostent *server;
-    // server = gethostbyname(IP_ADDRESS);
+    struct hostent *server;
+    server = gethostbyname(IP_ADDRESS);
     /* Cannot find host with specified IP Address */
-    /*if (server == NULL) {
+    if (server == NULL) {
         fprintf(stderr,"Error: The host %s does not exist!\n", IP_ADDRESS);
         exit(1);
-    }*/
+    }
     /* Specify network interface to connect with given IP Address and Port Number */ 
     server_addr.sin_family = AF_INET;
-    // bcopy((char *)server->h_addr, (char *)&server_addr.sin_addr.s_addr, server->h_length);
-    server_addr.sin_addr.s_addr = inet_addr(IP_ADDRESS);
+    bcopy((char *)server->h_addr, (char *)&server_addr.sin_addr.s_addr, server->h_length);
+    // server_addr.sin_addr.s_addr = inet_addr(IP_ADDRESS);
     server_addr.sin_port = htons(PORT);
     /* Connect client socket to server socket, display error message on failure */ 
     fprintf(stdout, "Connecting to Server...\n"); 
