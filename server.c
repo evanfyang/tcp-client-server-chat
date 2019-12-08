@@ -18,6 +18,8 @@
 
 #define MAX_BACKLOG 5
 
+#define CONTINUE_LISTENING 1
+
 int main(int argc, char *argv[])
 {
     int PORT;
@@ -86,7 +88,7 @@ int main(int argc, char *argv[])
     }
     /* If listen does not fail, display success message */
     else {
-        fprintf(stdout, "Waiting for Incoming Connection (ctrl+c to quit)...\n");
+        fprintf(stdout, "Waiting for Incoming Connection (Ctrl+C to Quit) ...\n");
     }
     /* Initialize variable to store client connection file descriptor */
     /* Get size of client_addr struct to use in accept */
@@ -116,7 +118,7 @@ int main(int argc, char *argv[])
         /* Display success message if close() was successful */
         else {
             fprintf(stdout, "Client Ended Connection\n");
-            fprintf(stdout, "Waiting for Incoming Connection...\n");
+            fprintf(stdout, "Waiting for Incoming Connection (Ctrl+C to Quit) ...\n");
         }
     }
     /* Close socket, display error message on failure */

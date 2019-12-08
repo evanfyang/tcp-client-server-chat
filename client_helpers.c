@@ -109,6 +109,8 @@ void clientChat(int socket_fd) {
         fgets(buffer, MAX_INPUT, stdin);
         /* If client send '!QUIT', break out of loop and end chat */ 
         if (strncmp("!QUIT", buffer, strlen("!QUIT")) == 0) { 
+            /* Write !QUIT to server */
+            numBytesWritten = write(socket_fd, buffer, sizeof(buffer));
             fprintf(stdout, "Closing Connection...\n");
             break; 
         }
