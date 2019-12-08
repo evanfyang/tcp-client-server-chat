@@ -18,8 +18,6 @@
 
 #define MAX_BACKLOG 5
 
-sig_atomic_t volatile CONTINUE_LISTENING = 1;
-
 int main(int argc, char *argv[])
 {
     int PORT;
@@ -70,7 +68,7 @@ int main(int argc, char *argv[])
     /* Specify network interface to bind with the IP Address of the machine 
        running the server and the specified the Port Number */ 
     server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = htonl(INADDR_ANY); /* Gets IP Address of machine */ 
+    server_addr.sin_addr.s_addr = INADDR_ANY; /* Gets IP Address of machine */
     server_addr.sin_port = htons(PORT);
     /* Bind socket to the specified address, display error message on failure */
     if (bind(socket_fd, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0) {
@@ -88,7 +86,7 @@ int main(int argc, char *argv[])
     }
     /* If listen does not fail, display success message */
     else {
-        fprintf(stdout, "Waiting for Incoming Connection...\n");
+        fprintf(stdout, "Waiting for Incoming Connection (ctrl+c to quit)...\n");
     }
     /* Initialize variable to store client connection file descriptor */
     /* Get size of client_addr struct to use in accept */

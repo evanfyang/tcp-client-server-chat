@@ -100,7 +100,7 @@ void clientChat(int socket_fd) {
         }
         /* Display message from server */ 
         else {
-            fprintf(stdout, "Server: %s\n", buffer);
+            fprintf(stdout, "Server: %s", buffer);
         }
         /* Reset buffer with zeros */
         bzero(buffer, MAX_INPUT); 

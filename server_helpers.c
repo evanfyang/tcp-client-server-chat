@@ -20,13 +20,13 @@
 #define MAX_INPUT 256
 #define CONTINUE_CHATTING 1
 
-extern sig_atomic_t volatile CONTINUE_LISTENING;
-
 void sig_handler(int signum)
 {
-  if (signum == SIGINT){
-      CONTINUE_LISTENING = 0;
-  }
+    if (signum == SIGINT){
+        fprintf(stdout, "Closing Server...\n");
+        fprintf(stdout, "Goodbye!\n");
+        exit(0);
+    }
 }
 
 /* return 1 if string contain only digits, return 0 otherwise */
@@ -81,7 +81,7 @@ void serverChat(int connect_fd) {
         }
         /* Display message from client */ 
         else {
-            fprintf(stdout, "Client: %s\n", buffer);
+            fprintf(stdout, "Client: %s", buffer);
         }
     }
 }
