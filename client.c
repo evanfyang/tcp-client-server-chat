@@ -16,43 +16,47 @@
 #define MIN_PORT_NUM 2000
 #define MAX_PORT_NUM 65535
 
+#define NUM_ARGUMENTS 3
+#define ARG_ZERO 0
+#define ARG_ONE 1
+#define ARG_TWO 2
 #define MAX_IP_LENGTH 15
 
 int main(int argc, char *argv[])
 {
-    char *IP_ADDRESS;
+    char* IP_ADDRESS = (char *) malloc(MAX_IP_LENGTH);
+    strcpy(IP_ADDRESS, argv[ARG_ONE]);
     int PORT;
 
     /* Must call client with 3 command line arguments */ 
-    if (argc < 3 || argc > 3) {
+    if (argc < NUM_ARGUMENTS || argc > NUM_ARGUMENTS) {
         fprintf(stderr, "Usage: %s [<IP_ADDRESS>] [<PORT_NUMBER>]\n", argv[0]);
 	    exit(1);
     }
     else {
         /* Check if IP Address is valid. If valid, check if port number is valid */
-        if (valid_ip(argv[1])) {
-            IP_ADDRESS = argv[1];
+        if (valid_ip(argv[ARG_ONE])) {
             /* Check if Port Number is valid */
-            if (only_digits(argv[2])) {
-                PORT = atoi(argv[2]);
+            if (only_digits(argv[ARG_TWO])) {
+                PORT = atoi(argv[ARG_TWO]);
                 /* Check if Port Number is in the correct range. If not, exit */
                 if (PORT < MIN_PORT_NUM || PORT > MAX_PORT_NUM) {
-                    fprintf(stderr, "%s: Error: Invalid Port Number %s\n", argv[0], argv[1]);
-                    fprintf(stderr, "%s: Port Number Range: 2000 to 65535\n", argv[0]);
+                    fprintf(stderr, "%s: Error: Invalid Port Number %s\n", argv[ARG_ZERO], argv[ARG_ONE]);
+                    fprintf(stderr, "%s: Port Number Range: 2000 to 65535\n", argv[ARG_ZERO]);
                     exit(1);
                 }
             }
             /* Otherwise, prompt user to enter a valid Port Number */
             else {
-                fprintf(stderr, "%s: Error: Invalid Port Number %s\n", argv[0], argv[1]);
-                fprintf(stderr, "%s: Port Number Format: [xxxxx], x = 0 to 9 (inclusive)\n", argv[0]);
+                fprintf(stderr, "%s: Error: Invalid Port Number %s\n", argv[ARG_ZERO], argv[ARG_ONE]);
+                fprintf(stderr, "%s: Port Number Format: [xxxxx], x = 0 to 9 (inclusive)\n", argv[ARG_ZERO]);
                 exit(1);
             }
         }
         /* Prompt user to enter a valid IP Address */
         else {
-            fprintf(stderr, "%s: Error: Invalid IP Address %s\n", argv[0], argv[1]);
-            fprintf(stderr, "%s: IPv4 Format: [x.x.x.x], x = 0 to 255 (inclusive)\n", argv[0]);
+            fprintf(stderr, "%s: Error: Invalid IP Address %s\n", argv[ARG_ZERO], argv[ARG_ONE]);
+            fprintf(stderr, "%s: IPv4 Format: [x.x.x.x], x = 0 to 255 (inclusive)\n", argv[ARG_ZERO]);
             exit(1);
         }
     }
@@ -73,13 +77,11 @@ int main(int argc, char *argv[])
     /* Initialize server_addr sockaddr_in struct to zeros */
     bzero(&server_addr, sizeof(server_addr));
     /* Get host information from IP Address and store in a hostent struct */
-    char* HOST = (char *) malloc(MAX_IP_LENGTH);
-    strcpy(HOST, IP_ADDRESS); 
     struct hostent *server;
-    server = gethostbyname(HOST);
-    /* Cannot find host with specified IP Address */
+    server = gethostbyname(IP_ADDRESS);
+    /* Error creating host entity */
     if (server == NULL) {
-        fprintf(stderr,"Error: The host %s does not exist!\n", IP_ADDRESS);
+        fprintf(stderr,"Error creating host entity!\n");
         exit(1);
     }
     else {
