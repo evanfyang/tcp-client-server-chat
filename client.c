@@ -24,16 +24,15 @@
 
 int main(int argc, char *argv[])
 {
-    char* IP_ADDRESS = (char *) malloc(MAX_IP_LENGTH);
-    strcpy(IP_ADDRESS, argv[ARG_ONE]);
-    int PORT;
-
     /* Must call client with 3 command line arguments */ 
-    if (argc < NUM_ARGUMENTS || argc > NUM_ARGUMENTS) {
+    if (argc != NUM_ARGUMENTS) {
         fprintf(stderr, "Usage: %s [<IP_ADDRESS>] [<PORT_NUMBER>]\n", argv[0]);
 	    exit(1);
     }
     else {
+        char* IP_ADDRESS = (char *) malloc(MAX_IP_LENGTH);
+        strcpy(IP_ADDRESS, argv[ARG_ONE]);
+        int PORT;
         /* Check if IP Address is valid. If valid, check if port number is valid */
         if (valid_ip(argv[ARG_ONE])) {
             /* Check if Port Number is valid */
@@ -59,59 +58,58 @@ int main(int argc, char *argv[])
             fprintf(stderr, "%s: IPv4 Format: [x.x.x.x], x = 0 to 255 (inclusive)\n", argv[ARG_ZERO]);
             exit(1);
         }
-    }
+            /* Create new socket and store returned file descriptor */
+        int socket_fd = socket(AF_INET, SOCK_STREAM, 0); 
+        /* Socket creation failed, display error message and exit */
+        if (socket_fd < 0) {
+            perror("Error creating socket"); 
+            exit(1);
+        }
+        /* Otherwise, display success message */
+        else {
+            fprintf(stderr, "Socket Created\n");
+        }
+        /* Declare sockaddr_in structs for server */
+        struct sockaddr_in server_addr;
+        /* Initialize server_addr sockaddr_in struct to zeros */
+        bzero(&server_addr, sizeof(server_addr));
+        /* Get host information from IP Address and store in a hostent struct */
+        struct hostent *server;
+        server = gethostbyname(IP_ADDRESS);
+        /* Error creating host entity */
+        if (server == NULL) {
+            fprintf(stderr,"Error creating host entity!\n");
+            exit(1);
+        }
+        else {
+            fprintf(stdout, "Connecting to Server %s...\n", IP_ADDRESS); 
+        }
+        /* Specify network interface to connect with given IP Address and Port Number */ 
+        server_addr.sin_family = AF_INET;
+        bcopy((char *)server->h_addr, (char *)&server_addr.sin_addr.s_addr, server->h_length);
+        // server_addr.sin_addr.s_addr = inet_addr(IP_ADDRESS);
+        server_addr.sin_port = htons(PORT);
+        /* Connect client socket to server socket, display error message on failure */ 
+        if (connect(socket_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+            perror("Error connecting to server socket");
+            exit(1);
+        }
+        /* Display success message if connect() was succesful */
+        else {
+            fprintf(stdout, "Connected to Server\n");
+        }
+        /* Start chat with server using client socket file descriptor */
+        clientChat(socket_fd);
 
-    /* Create new socket and store returned file descriptor */
-    int socket_fd = socket(AF_INET, SOCK_STREAM, 0); 
-    /* Socket creation failed, display error message and exit */
-    if (socket_fd < 0) {
-        perror("Error creating socket"); 
-        exit(1);
-    }
-    /* Otherwise, display success message */
-    else {
-        fprintf(stderr, "Socket Created\n");
-    }
-    /* Declare sockaddr_in structs for server */
-    struct sockaddr_in server_addr;
-    /* Initialize server_addr sockaddr_in struct to zeros */
-    bzero(&server_addr, sizeof(server_addr));
-    /* Get host information from IP Address and store in a hostent struct */
-    struct hostent *server;
-    server = gethostbyname(IP_ADDRESS);
-    /* Error creating host entity */
-    if (server == NULL) {
-        fprintf(stderr,"Error creating host entity!\n");
-        exit(1);
-    }
-    else {
-        fprintf(stdout, "Connecting to Server %s...\n", IP_ADDRESS); 
-    }
-    /* Specify network interface to connect with given IP Address and Port Number */ 
-    server_addr.sin_family = AF_INET;
-    bcopy((char *)server->h_addr, (char *)&server_addr.sin_addr.s_addr, server->h_length);
-    // server_addr.sin_addr.s_addr = inet_addr(IP_ADDRESS);
-    server_addr.sin_port = htons(PORT);
-    /* Connect client socket to server socket, display error message on failure */ 
-    if (connect(socket_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-        perror("Error connecting to server socket");
-        exit(1);
-    }
-    /* Display success message if connect() was succesful */
-    else {
-        fprintf(stdout, "Connected to Server\n");
-    }
-    /* Start chat with server using client socket file descriptor */
-    clientChat(socket_fd);
-
-    /* Close socket, display error message on failure */
-    if (close(socket_fd) < 0) {
-        perror("Error closing socket");
-        exit(1);
-    }
-    /* Successfully closed socket */
-    else {
-        fprintf(stdout, "Goodbye!\n");
+        /* Close socket, display error message on failure */
+        if (close(socket_fd) < 0) {
+            perror("Error closing socket");
+            exit(1);
+        }
+        /* Successfully closed socket */
+        else {
+            fprintf(stdout, "Goodbye!\n");
+        }
     }
     return 0;
 }
