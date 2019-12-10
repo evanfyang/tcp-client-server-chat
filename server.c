@@ -118,12 +118,14 @@ int main(int argc, char *argv[])
         }
         /* Display success message if close() was successful */
         else {
-            fprintf(stdout, "Client Ended Connection\n");
-            fprintf(stdout, "Waiting for Incoming Connection (Ctrl+C to Quit) ...\n");
-        }
-        if (quitServer) {
-            fprintf(stdout, "Terminating Server...\n");
-            break;
+            if (quitServer) {
+                fprintf(stdout, "Terminating Server...\n");
+                break;
+            }
+            else {
+                fprintf(stdout, "Client Ended Connection\n");
+                fprintf(stdout, "Waiting for Incoming Connection (Ctrl+C to Quit) ...\n");
+            }
         }
     }
     /* Close socket, display error message on failure */
