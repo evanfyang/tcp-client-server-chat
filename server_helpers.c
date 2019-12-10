@@ -23,7 +23,7 @@
 void sig_handler(int signum)
 {
     if (signum == SIGINT){
-        fprintf(stdout, "\nClosing Server...\n");
+        fprintf(stdout, "\nTerminating Server...\n");
         fprintf(stdout, "Goodbye!\n");
         exit(0);
     }
