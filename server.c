@@ -93,6 +93,7 @@ int main(int argc, char *argv[])
     /* Initialize variable to store client connection file descriptor */
     /* Get size of client_addr struct to use in accept */
     int connect_fd = 0;
+    bool quitServer = FALSE;
     socklen_t client_len = sizeof(client_addr);
     /* Call signal handler to handle keyboard interrupts to exit loop */
     signal(SIGINT, &sig_handler);
@@ -109,7 +110,7 @@ int main(int argc, char *argv[])
             fprintf(stdout, "Connection Created with Client\n");
         }
         /* Chat with client using the file descriptor returned from accept() */
-        serverChat(connect_fd);
+        quitServer = serverChat(connect_fd);
         /* Close file descriptor used to communicate with client, display error message on failure */
         if (close(connect_fd) < 0) {
             perror("Error closing socket");
@@ -119,6 +120,10 @@ int main(int argc, char *argv[])
         else {
             fprintf(stdout, "Client Ended Connection\n");
             fprintf(stdout, "Waiting for Incoming Connection (Ctrl+C to Quit) ...\n");
+        }
+        if (quitServer) {
+            fprintf(stdout, "Terminating Server...\n");
+            break;
         }
     }
     /* Close socket, display error message on failure */

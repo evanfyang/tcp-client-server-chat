@@ -43,9 +43,10 @@ int only_digits(char *str)
     return 1;
 }
  
-void serverChat(int connect_fd) {
+bool serverChat(int connect_fd) {
     /* Declare buffer and variables to store return values from read() and write() */
     char buffer[MAX_INPUT];
+    bool quitServer = FALSE;
     int numBytesWritten = 0, numBytesRead = 0;
     while (CONTINUE_CHATTING) {
         /* Initialize buffer with zeros */
@@ -55,6 +56,10 @@ void serverChat(int connect_fd) {
         fgets(buffer, MAX_INPUT, stdin);
         /* Write to client */
         numBytesWritten = write(connect_fd, buffer, sizeof(buffer));
+        if (strncmp("!QUIT", buffer, strlen("!QUIT")) == 0) { 
+            quitServer = TRUE;
+            break; 
+        }
         /* If write() fails, print error message and exit */
         if (numBytesWritten < 0) {
             perror("Error on write");
@@ -74,6 +79,11 @@ void serverChat(int connect_fd) {
             perror("Error on read");
             exit(1);
         }
+        /* Client sends nothing, likely terminated by SIGINT */
+        else if (numBytesRead == 0) {
+            fprintf(stdout, "Client Terminated\n");
+            break; 
+        }
         /* If client sent '!QUIT', break out of loop and end chat */ 
         else if (strncmp("!QUIT", buffer, strlen("!QUIT")) == 0) { 
             fprintf(stdout, "Client Ended Connection\n");
@@ -84,4 +94,5 @@ void serverChat(int connect_fd) {
             fprintf(stdout, "Client: %s", buffer);
         }
     }
+    return quitServer;
 }

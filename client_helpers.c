@@ -98,6 +98,18 @@ void clientChat(int socket_fd) {
             perror("Error on read");
             exit(1);
         }
+        /* Server sends nothing, likely terminated by SIGINT */
+        else if (numBytesRead == 0) {
+            fprintf(stdout, "Server Terminated\n");
+            fprintf(stdout, "Closing Connection...\n");
+            break; 
+        }
+        /* Server exited by sending '!QUIT' */
+        else if (strncmp("!QUIT", buffer, strlen("!QUIT")) == 0) {
+            fprintf(stdout, "Server Terminated\n");
+            fprintf(stdout, "Closing Connection...\n");
+            break; 
+        }
         /* Display message from server */ 
         else {
             fprintf(stdout, "Server: %s", buffer);
