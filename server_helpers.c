@@ -43,10 +43,10 @@ int only_digits(char *str)
     return 1;
 }
  
-bool serverChat(int connect_fd) {
+int serverChat(int connect_fd) {
     /* Declare buffer and variables to store return values from read() and write() */
     char buffer[MAX_INPUT];
-    bool quitServer = FALSE;
+    int quitServer = 0;
     int numBytesWritten = 0, numBytesRead = 0;
     while (CONTINUE_CHATTING) {
         /* Initialize buffer with zeros */
@@ -57,7 +57,7 @@ bool serverChat(int connect_fd) {
         /* Write to client */
         numBytesWritten = write(connect_fd, buffer, sizeof(buffer));
         if (strncmp("!QUIT", buffer, strlen("!QUIT")) == 0) { 
-            quitServer = TRUE;
+            quitServer = 1;
             break; 
         }
         /* If write() fails, print error message and exit */

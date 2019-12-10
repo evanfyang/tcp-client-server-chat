@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
     /* Initialize variable to store client connection file descriptor */
     /* Get size of client_addr struct to use in accept */
     int connect_fd = 0;
-    bool quitServer = FALSE;
+    int quitServer = 0;
     socklen_t client_len = sizeof(client_addr);
     /* Call signal handler to handle keyboard interrupts to exit loop */
     signal(SIGINT, &sig_handler);
